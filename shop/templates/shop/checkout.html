@@ -1,0 +1,111 @@
+{% extends 'shop/base.html' %}
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <ul class="list-group list-group-numbered" id="item-list">
+            
+            <h3 class="text-center">Voici votre liste</h3>
+          </ul>
+    </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" id="items" name="items">
+      <div class="form-row">
+        <div class="col-md-4 mb-3">
+          <label for="validationDefault01">Nom</label>
+          <input type="text" name="nom" class="form-control" id="nom" placeholder="Name"  required>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="validationDefault02">Email</label>
+          <input type="email" name="email" class="form-control" id="email" placeholder="Kahayabanywesizekevin@gmail.com"  required>
+        </div>
+        
+        <div class="col-md-4 mb-3">
+          <label for="validationDefault02">Adresse</label>
+          <input type="text" name="adresse" class="form-control" id="adresse" placeholder="1234 Main st"  required>
+        </div>
+      </div> 
+      <div class="form-row">
+        <div class="col-md-6 mb-3">
+          <label for="validationDefault03">Ville</label>
+          <input type="text" name="ville" class="form-control" id="ville" placeholder="City" required>
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="validationDefault04">Pays</label>
+          <select name="pays" id="pays" class="form-control">
+            <option selected>Choisir ton pays</option>
+            <option value="Congo-Kinshasa">Congo-Kinshasa</option>
+            <option value="Tanzanie">Tanzanie</option>
+            <option value="Rwanda">Rwanda</option>
+            <option value="Ouganda">Ouganda</option>
+            <option value="Congo-Braza">Congo-Braza</option>
+            <option value="RSA">RSA</option>
+            <option value="France">France</option>
+          </select>
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="validationDefault05">Zip</label>
+          <input type="text" name="zipcode"  class="form-control" id="zipcode"  placeholder="Zip" required>
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="validationDefault05">Somme totale a payer</label>
+          <input type="readonly" name="total"  class="bg-dark text-warning form-control" id="total"  >
+        </div>
+      </div>
+      
+      <button class="btn btn-primary" type="submit">Commander</button>
+      
+    </form>
+  </div>
+</div>
+{% endblock %}
+{% block js %}
+  <script type="text/javascript">
+    if(localStorage.getItem('panier')==null){
+      var panier = {};
+
+    }else{
+      panier = JSON.parse(localStorage.getItem('panier'));
+    }
+    var total = 0;
+    var nombre =0;
+    for(item in panier){
+      let nom = panier[item][1];
+      let quantite = panier[item][0];
+      let prix = panier[item][2]
+      nombre += quantite;
+      total += prix;
+      let itemString = `<li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                
+                ${nom}
+              </div>
+                 <span class="badge bg-primary rounded-pill">QTE: ${quantite}</span>
+              <span class="badge bg-warning rounded-pill">$ ${prix}</span>
+           
+            </li>`;
+            $('#item-list').append(itemString);
+
+    }
+    let itemNombre = `<li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                
+                <b class='bg-danger'> PRIX ET QUANTITE TOTAL</b>
+              </div>
+                 <span class="badge bg-danger rounded-pill">TQTE: ${nombre}</span>
+              <span class="badge bg-danger rounded-pill">Total:$ ${total}</span>
+           
+            </li>`;
+            $('#item-list').append(itemNombre);
+            $('#total').val('$'+total);
+
+    // pour recuper les articles choisit par users
+
+    $('#items').val(JSON.stringify(panier));
+
+    
+  </script>
+{% endblock %}
